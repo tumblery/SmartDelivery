@@ -1,0 +1,19 @@
+<launch>
+
+   <master auto="start"/>
+ <!-- Run the map server --> 
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find ca_driver)/maps/map_test2.pgm 0.05"/>
+  <node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0.0 0.0 0.0 0 0 0.0 /odom /base_link 10"/>
+  <node pkg="xv_11_laser_driver" type="neato_laser_publisher" name="laser_publish"/>
+ <!--- Run AMCL --> 
+    <include file="$(find navigation_stage)/move_base_config/amcl_node.xml" />
+
+   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <rosparam file="$(find ca_driver)/params/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
+    <rosparam file="$(find ca_driver)/params/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find ca_driver)/params/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find ca_driver)/params/global_costmap_params.yaml" command="load" /> 
+    <rosparam file="$(find ca_driver)/params/base_local_planner_params.yaml" command="load" />
+ </node>
+
+</launch> 
